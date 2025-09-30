@@ -4,49 +4,43 @@ sqliteConnection = sqlite3.connect("EventPlannerDB.db")
 cursor = sqliteConnection.cursor()
 
 sql_command = """CREATE TABLE accounts (
-BearID INTEGER PRIMARY KEY, 
+accountID INTEGER PRIMARY KEY, 
+accountType TEXT CHECK(creatorType IN ('Student','Faculty')),
 username TEXT UNIQUE,
-password TEXT, 
-recoveryEmail TEXT,     
-RSVPEvents BLOB,             
-LikedEvents BLOB,
-CreatedEvents BLOB
-)"""
-cursor.execute(sql_command)
+password TEXT NOT NULL, 
+recoveryEmail TEXT NOT NULL
+);
 
-
-sql_command = """CREATE TABLE RSVPed_Events (
+CREATE TABLE RSVPed_Events (
+rsvpID INTEGER UNIQUE,
 EventID INTEGER,
-FOREIGN KEY (EventID) REFERENCES events(eventID)
-)"""
-cursor.execute(sql_command)
+creatorID INTEGER,
+userWhoRSVPID INTEGER,
+
+FOREIGN KEY (eventID) REFERENCES events(eventID),
+FOREIGN KEY (creatorID) REFERENCES events(accountID),
+FOREIGN KEY (userWhoRSVPID) REFERENCES accounts(accountID)
+);
 
 
-sql_command = """CREATE TABLE events (
+CREATE TABLE events (
 eventID INTEGER PRIMARY KEY,     
-BearID INTEGER,
+creatorID INTEGER,
 creatorType TEXT CHECK(creatorType IN ('Student','Faculty')),
 eventName TEXT NOT NULL, 
 eventDescription TEXT NOT NULL,         
-images BLOB,                                      
-eventType TEXT,    
-eventAccess TEXT CHECK(eventAccess IN ('Public','Private')), 
+images BLOB,
+eventType TEXT CHECK(eventType IN ("Art", "Math", "Science", "Computer Science", "History", "Education", "Political Science", "Software Engineering", "Business", "Sports", "Honors", "Workshops", "Study Session", "Dissertation", "Performance", "Competition")),    
+eventAccess TEXT CHECK(eventAccess IN ('Public','Private', 'Inactive')), 
 startDateTime TEXT NOT NULL, 
 endDateTime TEXT NOT NULL, 
-listOfUsersRSVPd BLOB, 
-numberOfLikes INTEGER,       
-listOfUsersLiked BLOB,
-FOREIGN KEY (BearID) REFERENCES accounts(BearID)
+numberOfLikes INTEGER,
+
+FOREIGN KEY (creatorID) REFERENCES accounts(accountID),
+FOREIGN KEY (creatorType) REFERENCES accounts(accountType)
+);
 )"""
 cursor.execute(sql_command)
-
-
-sql_command = """CREATE TABLE Event_UsersRSVPed (
-EventID INTEGER,
-FOREIGN KEY (EventID) REFERENCES events(eventID)
-)"""
-cursor.execute(sql_command)
-
 
 sqliteConnection.commit()
 sqliteConnection.close()
