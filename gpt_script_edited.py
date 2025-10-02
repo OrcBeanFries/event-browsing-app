@@ -51,6 +51,7 @@ numberLikes INTEGER,
 rsvpRequired BOOLEAN DEFAULT 0,
 isPriced BOOLEAN DEFAULT 0,
 cost REAL,
+maxCapacity INTEGER,
 
 FOREIGN KEY (creatorID) REFERENCES accounts(accountID),
 FOREIGN KEY (creatorType) REFERENCES accounts(accountType)
