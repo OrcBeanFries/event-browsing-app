@@ -18,6 +18,8 @@ DROP DATABASE IF EXISTS EventPlannerDB;
 CREATE DATABASE IF EXISTS EventPlannerDB;
 USE EventPlannerDB;
 
+
+
 CREATE TABLE accounts (
 accountID INTEGER PRIMARY KEY, 
 accountType TEXT CHECK(creatorType IN ('Student','Faculty')),
@@ -34,7 +36,7 @@ verificationExpiry DATETIME
 
 
 CREATE TABLE events (
-eventID INTEGER PRIMARY KEY,
+eventID INTEGER PRIMARY KEY,.
 creatorID INTEGER,
 creatorType TEXT CHECK(creatorType IN ('Student','Faculty')),
 eventName TEXT NOT NULL,
@@ -79,7 +81,23 @@ invitedID INTEGER NOT NULL,
 FOREIGN KEY (eventID) REFERENCES events(eventID),
 FOREIGN KEY (creatorID) REFERENCES events(creatorID),
 FOREIGN KEY (invitedID) REFERENCES accounts(accountID)
-)
+);
+
+
+CREATE TABLE reservations (
+reservationID INTEGER PRIMARY KEY,
+eventID INTEGER NOT NULL,
+creatorID INTEGER NOT NULL,
+location TEXT NOT NULL,
+startDateTime TEXT NOT NULL,
+endDateTime TEXT NOT NULL,
+
+FOREIGN KEY (eventID) REFERENCES events(eventID),
+FOREIGN KEY (creatorID) REFERENCES events(creatorID),
+FOREIGN KEY (location) REFERENCES events(location),
+FOREIGN KEY (startDateTime) REFERENCES events(startDateTime),
+FOREIGN KEY (endDateTime) REFERENCES events(endDateTime)
+);
 """
 cursor.execute(sql_command)
 
